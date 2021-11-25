@@ -12,13 +12,11 @@ import pageOption from './services/page_option';
 
 import makeMarkup from './services/markup';
 
+let lightbox = null;
+
 const renderImg = items => {
   const images = items.map(image => makeMarkup(image)).join('');
   galeryRef.insertAdjacentHTML('beforeend', images);
-  let lightbox = new SimpleLightbox('.gallery a', {
-    captionsData: 'alt',
-    captionDelay: 250,
-  });
 };
 
 // const fetchImg = () => {
@@ -73,14 +71,20 @@ const searchImg = e => {
 
   galeryRef.innerHTML = '';
   pageOption.page = 1;
-  fetchImg();
+  fetchImg().then(() => {
+    lightbox = new SimpleLightbox('.gallery a', {
+      captionsData: 'alt',
+      captionDelay: 250,
+    });
+  });
 };
 
 const loadMore = () => {
   pageOption.page += 1;
 
-  fetchImg();
-  // refresh();
+  fetchImg().then(() => {
+    lightbox.refresh();
+  });
 };
 
 formRef.addEventListener('submit', searchImg);
